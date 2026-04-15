@@ -1,3 +1,7 @@
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
@@ -12,8 +16,18 @@ export default function Home() {
               Track your job applications with ease and stay organized.
             </p>
             <div className="flex flex-col gap-4 items-center">
-              <button className="">Get Started</button>
-              <p>free to use, no credit card required.</p>
+              <Link href="/sign-up">
+                <Button
+                  className="cursor-pointer px-8 h-12 font-medium"
+                  variant={"default"}
+                  size={"lg"}
+                >
+                  Get Started <ArrowRight className="ml-2" />
+                </Button>
+              </Link>
+              <p className="text-sm text-muted-foreground">
+                free to use, no credit card required.
+              </p>
             </div>
           </div>
         </section>
