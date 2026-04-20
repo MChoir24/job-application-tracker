@@ -1,5 +1,6 @@
+import ImageCarousel from "@/components/image-carousel/image-carousel";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -33,26 +34,7 @@ export default function Home() {
           </div>
         </section>
         {/* Hero Image Section */}
-        <section className="border-t bg-white py-16">
-          <div className="container relative mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <Image
-                src="/hero-images/image1.jpg"
-                alt="Hero Image"
-                className="w-full h-auto rounded-lg shadow-lg"
-                width={800}
-                height={450}
-              />
-            </div>
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 mb-8 text-center">
-              <Button
-                variant={"secondary"}
-                size={"xs"}
-                className="text-white rounded-full"
-              ></Button>
-            </div>
-          </div>
-        </section>
+        <ImageCarousel />
       </main>
     </div>
   );
