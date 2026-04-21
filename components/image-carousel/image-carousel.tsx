@@ -13,22 +13,27 @@ export default function ImageCarousel() {
     "/hero-images/image3.jpg",
   ];
   const [index, setIndex] = useState(0);
+  const [auto, setAuto] = useState(true);
 
   const next = useCallback(() => {
+    setAuto(false);
     setIndex((prev) => (prev + 1) % images.length);
   }, [images.length]);
 
   const prev = useCallback(() => {
+    setAuto(false);
     setIndex((prev) => (prev - 1 + images.length) % images.length);
   }, [images.length]);
 
+  // Auto-advance every 5 seconds. stop when user clicks on indicator or arrows
   useEffect(() => {
+    if (!auto) return;
     const interval = setInterval(() => {
       next();
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [next]);
+  }, [auto, next]);
 
   return (
     <section className="border-t bg-white py-16">
@@ -66,7 +71,14 @@ export default function ImageCarousel() {
           </button>
 
           {/* Indicator */}
-          <Indicator num={images.length} index={index} />
+          <Indicator
+            num={images.length}
+            index={index}
+            indexCallback={(newIndex) => {
+              setAuto(false);
+              setIndex(newIndex);
+            }}
+          />
         </div>
       </div>
     </section>
