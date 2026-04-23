@@ -104,7 +104,6 @@ export default function SignUp() {
             size={"lg"}
             className="w-full"
             type="submit"
-            formAction="/api/auth/signup"
             disabled={loading}
           >
             {loading ? "Creating Account..." : "Sign Up"}
