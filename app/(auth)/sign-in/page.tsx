@@ -1,39 +1,60 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 export default function SignIn() {
-  // const [move, setMove] = useState(false);
-  const [step, setStep] = useState(0);
-
-  const handleMove = () => {
-    setStep(1);
-  };
-
-  useEffect(() => {
-    if (step === 1) {
-      const timer = setTimeout(() => {
-        setStep(2);
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [step]);
-
   return (
-    <>
-      <h1 className="text-2xl font-bold mb-6">Sign In Page</h1>
-      <Button onClick={handleMove}>forward</Button>
-      <Button onClick={() => setStep(0)}>backward</Button>
-      <div className="relative w-52 h-14 border">
-        <div
-          className={cn(
-            "absolute top-1/2 -translate-y-1/2 w-10 h-10 bg-gray-300 rounded-full transition-all hover:w-20",
-            { "w-20 h-5": step >= 1 },
-            { "w-10 h-10 translate-x-10": step >= 2 },
-          )}
-        ></div>
-      </div>
-    </>
+    <Card className="w-full max-w-md border-0 shadow-lg space-y-2">
+      <CardHeader className="">
+        <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
+        <CardDescription>Sign in to your account to continue.</CardDescription>
+      </CardHeader>
+      <form action="" className="space-y-4">
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              placeholder="john.doe@example.com"
+              type="email"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              placeholder="••••••••"
+              type="password"
+              minLength={8}
+              required
+            />
+          </div>
+          <Button
+            size={"lg"}
+            className="w-full"
+            type="submit"
+            formAction="/api/auth/signup"
+          >
+            Sign In
+          </Button>
+          <p className="text-sm text-center">
+            Don&apos;t have an account?{" "}
+            <Link href="/sign-up" className="text-primary hover:underline">
+              Sign Up
+            </Link>
+          </p>
+        </CardContent>
+      </form>
+    </Card>
   );
 }

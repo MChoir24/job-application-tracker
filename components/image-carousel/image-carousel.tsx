@@ -45,6 +45,7 @@ export default function ImageCarousel() {
           >
             {images.map((src, i) => (
               <Image
+                loading="eager"
                 key={i}
                 src={src}
                 alt={`Hero Image ${i + 1}`}
