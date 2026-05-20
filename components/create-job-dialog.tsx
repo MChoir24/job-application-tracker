@@ -5,8 +5,10 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
+import { Input } from "./ui/input";
 
 interface CreateJobApplicationDialogProps {
   columnId: string;
@@ -25,8 +27,24 @@ export default function CreateJobApplicationDialog({
         </div>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>Add Job Application</DialogHeader>
-        <DialogDescription>Track a new job application</DialogDescription>
+        <DialogHeader>
+          <DialogTitle>Add Job Application</DialogTitle>
+          <DialogDescription>Track a new job application</DialogDescription>
+        </DialogHeader>
+        <form>
+          <div>
+            <div>
+              <div>
+                <label htmlFor="company">Company *</label>
+                <Input id="company" required />
+              </div>
+              <div>
+                <label htmlFor="position">Position *</label>
+                <Input id="position" required />
+              </div>
+            </div>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
