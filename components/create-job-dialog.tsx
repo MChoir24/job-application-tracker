@@ -58,7 +58,10 @@ export default function CreateJobApplicationDialog({
       } else {
         alert(result.error);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error creating job application:", error);
+      alert("An error occurred while creating the job application.");
+    }
   };
 
   return (
