@@ -4,16 +4,13 @@ import dbConnect from "@/lib/db";
 import { Board } from "@/lib/models";
 import { redirect } from "next/navigation";
 
-export default async function Dashboard() {
-  const session = await getSession();
-  if (!session?.user) {
-    redirect("/sign-in");
-  }
+async function getBoard(userId: string) {
+  "use cache";
 
   await dbConnect();
 
   const boardDoc = await Board.findOne({
-    userId: session.user.id,
+    userId: userId,
     name: "Job Hunt",
   }).populate({
     path: "columns",
@@ -22,7 +19,15 @@ export default async function Dashboard() {
 
   if (!boardDoc) return null;
 
-  const board = JSON.parse(JSON.stringify(boardDoc));
+  return JSON.parse(JSON.stringify(boardDoc));
+}
+
+export default async function Dashboard() {
+  const session = await getSession();
+  const board = await getBoard(session?.user.id ?? "");
+  if (!session?.user) {
+    redirect("/sign-in");
+  }
 
   return (
     <div className="min-h-screen bg-white">
