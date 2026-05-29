@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:jobs": "tsx --env-file=.env.local scripts/seed.ts",
+    "revalidate:dashboard": "tsx --env-file=.env.local scripts/revalidate-dashboard.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",
@@ -33,6 +35,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
     "tailwindcss": "^4",
+    "tsx": "^4.22.3",
     "typescript": "^5"
   }
 }

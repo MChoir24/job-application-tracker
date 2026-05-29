@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth/auth";
 import dbConnect from "@/lib/db";
 import { Board } from "@/lib/models";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 async function getBoard(userId: string) {
   "use cache";
@@ -22,7 +23,7 @@ async function getBoard(userId: string) {
   return JSON.parse(JSON.stringify(boardDoc));
 }
 
-export default async function Dashboard() {
+async function DashboardPage() {
   const session = await getSession();
   const board = await getBoard(session?.user.id ?? "");
   if (!session?.user) {
@@ -41,5 +42,19 @@ export default async function Dashboard() {
         <KanbanBoard board={board} userId={session.user.id} />
       </div>
     </div>
+  );
+}
+
+export default async function Dashboard() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
+      <DashboardPage />
+    </Suspense>
   );
 }
