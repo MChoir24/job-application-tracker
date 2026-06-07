@@ -3,9 +3,9 @@ import { Board, Column } from "./models";
 import jobApplication from "./models/job-application";
 
 const DEFAULT_COLUMNS = [
-  { name: "Wish list", order: 0 },
+  { name: "Wish List", order: 0 },
   { name: "Applied", order: 1 },
-  { name: "Interviewing ", order: 2 },
+  { name: "Interviewing", order: 2 },
   { name: "Offer", order: 3 },
   { name: "Rejected", order: 4 },
 ];
