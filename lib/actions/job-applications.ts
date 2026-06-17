@@ -96,3 +96,52 @@ export async function createJobApplication(data: JobApplicationData) {
 
   return { data: JSON.parse(JSON.stringify(jobApplication)) };
 }
+
+export async function updateJobApplication(
+  id: string,
+  updates: {
+    company?: string;
+    position?: string;
+    location?: string;
+    notes?: string;
+    salary?: string;
+    jobUrl?: string;
+    columnId?: string;
+    order?: number;
+    tags?: string[];
+    description?: string;
+  },
+) {
+  const session = await getSession();
+
+  if (!session?.user) {
+    return { error: "Unauthorized" };
+  }
+
+  const jobApplication = await JobApplication.findById(id);
+
+  if (!jobApplication) {
+    return { error: "Job application not found" };
+  }
+  if (jobApplication.userId.toString() !== session.user.id) {
+    return { error: "Access denied" };
+  }
+
+  const { columnId, order, ...otherUpdates } = updates;
+
+  const updatesToApply: Partial<{
+    company?: string;
+    position?: string;
+    location?: string;
+    notes?: string;
+    salary?: string;
+    jobUrl?: string;
+    columnId?: string;
+    order?: number;
+    tags?: string[];
+    description?: string;
+  }> = otherUpdates;
+
+  const currentColumnId = jobApplication.columnId.toString();
+  const newColumnId = columnId?.toString();
+}
