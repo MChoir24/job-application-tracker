@@ -144,4 +144,26 @@ export async function updateJobApplication(
 
   const currentColumnId = jobApplication.columnId.toString();
   const newColumnId = columnId?.toString();
+
+  const isMovingToDifferentColumn =
+    newColumnId && newColumnId !== currentColumnId;
+
+  if (isMovingToDifferentColumn) {
+    await Column.findByIdAndUpdate(currentColumnId, {
+      $pull: { jobApplications: id },
+    });
+
+    const jobsInTargetColumn = await JobApplication.find({
+      columnId: newColumnId,
+      _id: { $ne: id },
+    })
+      .sort({ order: 1 })
+      .lean();
+
+    let newOrderValue: number;
+
+    if (order !== undefined && order !== null) {
+      newOrderValue = order * 100;
+    }
+  }
 }
