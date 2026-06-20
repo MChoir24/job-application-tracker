@@ -10,7 +10,6 @@ export function useBoard(initialBoard?: Board | null) {
 
   useEffect(() => {
     if (initialBoard) {
-      console.log("Setting initial board:");
       setBoard(initialBoard);
       setColumns(initialBoard.columns || []);
     }
