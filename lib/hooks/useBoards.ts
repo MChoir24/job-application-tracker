@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Board, Column } from "../models/model.types";
 
 export function useBoard(initialBoard?: Board | null) {
   const [board, setBoard] = useState<Board | null>(initialBoard || null);
   const [columns, setColumns] = useState<Column[]>(initialBoard?.columns || []);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialBoard) {
+      console.log("Setting initial board:");
+      setBoard(initialBoard);
+      setColumns(initialBoard.columns || []);
+    }
+  }, [initialBoard]);
 
   async function moveJob(
     jobApplicationId: string,
