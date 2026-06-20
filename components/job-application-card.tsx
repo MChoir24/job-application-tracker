@@ -1,3 +1,5 @@
+"use client";
+
 import { Column, JobApplication } from "@/lib/models/model.types";
 import { Card, CardContent } from "./ui/card";
 import {
@@ -19,6 +21,17 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { updateJobApplication } from "@/lib/actions/job-applications";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import { useState } from "react";
 
 interface JobApplicationCardProps {
   job: JobApplication;
@@ -29,6 +42,37 @@ export default function JobApplicationCard({
   job,
   columns,
 }: JobApplicationCardProps) {
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    company: job.company,
+    position: job.position,
+    location: job.location || "",
+    notes: job.notes || "",
+    salary: job.salary || "",
+    jobUrl: job.jobUrl || "",
+    columnId: job.columnId || "",
+    tags: job.tags?.join(", ") || "",
+    description: job.description || "",
+  });
+
+  async function handleUpdate(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    try {
+      const result = await updateJobApplication(job._id, {
+        ...formData,
+        tags: formData.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag.length > 0),
+      });
+      if (!result.error) {
+        setIsEditing(false);
+      }
+    } catch (err) {
+      console.log("Failed to update job application", err);
+    }
+  }
+
   async function handleMoveJob(newColumnId: string) {
     try {
       const result = await updateJobApplication(job._id, {
@@ -88,7 +132,7 @@ export default function JobApplicationCard({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="min-w-40">
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setIsEditing(true)}>
                     <Edit2 className="mr-2 h-4 w-4" /> Edit
                   </DropdownMenuItem>
                   <DropdownMenuSub>
@@ -124,6 +168,125 @@ export default function JobApplicationCard({
           </div>
         </CardContent>
       </Card>
+
+      {/* Update Job Dialog */}
+      <Dialog open={isEditing} onOpenChange={setIsEditing}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Job Application</DialogTitle>
+            <DialogDescription>
+              Modify the details of this job application
+            </DialogDescription>
+          </DialogHeader>
+          <form className="space-y-4" onSubmit={handleUpdate}>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="company">Company *</label>
+                  <Input
+                    id="company"
+                    value={formData.company}
+                    onChange={(e) =>
+                      setFormData({ ...formData, company: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="position">Position *</label>
+                  <Input
+                    id="position"
+                    value={formData.position}
+                    onChange={(e) =>
+                      setFormData({ ...formData, position: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="location">Location</label>
+                  <Input
+                    id="location"
+                    value={formData.location}
+                    onChange={(e) =>
+                      setFormData({ ...formData, location: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="salary">Salary</label>
+                  <Input
+                    id="salary"
+                    value={formData.salary}
+                    onChange={(e) =>
+                      setFormData({ ...formData, salary: e.target.value })
+                    }
+                    placeholder="$0,000"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="jobUrl">Job URL</label>
+                <Input
+                  id="jobUrl"
+                  value={formData.jobUrl}
+                  onChange={(e) =>
+                    setFormData({ ...formData, jobUrl: e.target.value })
+                  }
+                  placeholder="https://example.com/job"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="tags">Tags (comma-separated)</label>
+                <Input
+                  id="tags"
+                  value={formData.tags}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tags: e.target.value })
+                  }
+                  placeholder="e.g., Python, React, Remote"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="description">Description</label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  rows={3}
+                  placeholder="Brief description of the job"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="notes">Notes</label>
+                <Textarea
+                  id="notes"
+                  value={formData.notes}
+                  onChange={(e) =>
+                    setFormData({ ...formData, notes: e.target.value })
+                  }
+                  rows={3}
+                  placeholder="Additional notes"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsEditing(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Save Changes</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
