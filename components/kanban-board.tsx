@@ -24,6 +24,8 @@ import { useBoard } from "@/lib/hooks/useBoards";
 import {
   closestCorners,
   DndContext,
+  DragEndEvent,
+  DragStartEvent,
   PointerSensor,
   useDroppable,
   useSensor,
@@ -35,6 +37,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
 
 interface KanbanBoardProps {
   board: Board; // Replace with your actual Board type
@@ -175,6 +178,7 @@ function SortableJobCard({
 }
 
 export default function KanbanBoard({ board, userId }: KanbanBoardProps) {
+  const [activeId, setActiveId] = useState<string | null>(null);
   const { columns, moveJob } = useBoard(board);
 
   const sortedColumns = columns?.sort((a, b) => a.order - b.order) || [];
@@ -182,8 +186,36 @@ export default function KanbanBoard({ board, userId }: KanbanBoardProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
-  async function handleDragStart() {}
-  async function handleDragEnd() {}
+  async function handleDragStart(event: DragStartEvent) {
+    setActiveId(event.active.id as string);
+  }
+  async function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (!over || !board._id) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    let draggedJob: JobApplication | null = null;
+    let sourceColumn: Column | null = null;
+    let sourceIndex = -1;
+
+    for (const column of sortedColumns) {
+      const jobs =
+        column.jobApplications.sort((a, b) => a.order - b.order) || [];
+      const jobIndex = jobs.findIndex((job) => job._id === activeId);
+      if (jobIndex !== -1) {
+        draggedJob = jobs[jobIndex];
+        sourceColumn = column;
+        sourceIndex = jobIndex;
+        break;
+      }
+    }
+
+    if (!draggedJob || !sourceColumn) return;
+  }
 
   return (
     <DndContext
@@ -192,8 +224,8 @@ export default function KanbanBoard({ board, userId }: KanbanBoardProps) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div>
-        <div>
+      <div className="space-x-4">
+        <div className="flex gap-4 overflow-x-auto pb-4">
           {sortedColumns.map((col, key) => {
             const config = COLUMN_CONFIG[key] || {
               color: "bg-gray-500",
